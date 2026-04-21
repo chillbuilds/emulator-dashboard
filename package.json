@@ -1,0 +1,36 @@
+{
+  "name": "xemu-launcher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "e.js",
+  "dependencies": {
+    "@sensslen/node-gamepad": "^1.0.8",
+    "chardet": "^2.1.1",
+    "cli-width": "^4.1.0",
+    "express": "^5.2.1",
+    "fast-string-truncated-width": "^3.0.3",
+    "fast-string-width": "^3.0.2",
+    "fast-wrap-ansi": "^0.2.0",
+    "fs": "^0.0.1-security",
+    "iconv-lite": "^0.7.2",
+    "inquirer": "^13.4.1",
+    "internal-ip": "^9.0.0",
+    "joystick": "^0.1.2",
+    "mute-stream": "^3.0.0",
+    "path": "^0.12.7",
+    "ps-node": "^0.1.6",
+    "run-async": "^4.0.6",
+    "rxjs": "^7.8.2",
+    "safer-buffer": "^2.1.2",
+    "signal-exit": "^4.1.0",
+    "socket.io": "^4.8.3",
+    "tslib": "^2.8.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}
