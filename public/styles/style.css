@@ -37,6 +37,27 @@ body {
     width: 100%;
 }
 
+#emulator-container {
+    width: 80%;
+    margin: 6% 10%;
+}
+
+.emulator {
+    position: relative;
+    float: left;
+    width: 17%;
+    margin: 1%;
+    border: #53DD6C solid 4px;
+    aspect-ratio: 1/1;
+}
+
+.emulator-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    display: block;
+}
+
 #game-container {
     width: 80%;
     margin: 6% 10%;

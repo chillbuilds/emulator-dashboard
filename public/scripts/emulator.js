@@ -1,21 +1,21 @@
 let selectionIndex = 0
-let emulatorCount;
+let gameCount;
 
 let cursorVisible = false
 document.documentElement.style.cursor = 'none'
 
 const socket = io()
 
-// if(localStorage.getItem('selectionIndex')){
-//     selectionIndex = localStorage.getItem('selectionIndex')
-// }
+if(localStorage.getItem('selectionIndex')){
+    selectionIndex = localStorage.getItem('selectionIndex')
+}
 
-let updateSelectedEmulator = () => {
+let updateSelectedGame = () => {
 
     localStorage.setItem('selectionIndex', selectionIndex)
 
     $($('.selected')[0]).removeClass('selected')
-    $($('.emulator')[selectionIndex]).addClass('selected')
+    $($('.game')[selectionIndex]).addClass('selected')
 
     $('.selected')[0].scrollIntoView({
         behavior: 'smooth',
@@ -23,7 +23,7 @@ let updateSelectedEmulator = () => {
         inline: 'center'
     })
 
-    $('#emulator-title').text($($('.emulator')[selectionIndex]).attr('emulatorTitle'))
+    $('#game-title').text($($('.game')[selectionIndex]).attr('gameTitle'))
 }
 
 let toggleCursor = () => {
@@ -36,30 +36,35 @@ let toggleCursor = () => {
     }
 }
 
-let launchEmulator = () => {
-    const selectedEmulator = $($('.selected')[0]).attr('emulatorTitle')
+let launchGame = () => {
+    const selectedGame = $($('.selected')[0]).attr('gameTitle')
 
-    console.log(selectedEmulator)
-
-    window.location.href = `/html/${selectedEmulator}.html`
+    fetch('/launch-game', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain'
+        },
+        body: selectedGame
+    })
+    .catch(err => console.error(err))
 }
 
 let inputRight = () => {
-    if(selectionIndex < emulatorCount - 1){
+    if(selectionIndex < gameCount - 1){
             selectionIndex++
     }else{
         selectionIndex = 0
     }
-    updateSelectedEmulator()
+    updateSelectedGame()
 }
 
 let inputLeft = () => {
     if(selectionIndex > 0){
         selectionIndex--
     }else{
-        selectionIndex = emulatorCount - 1
+        selectionIndex = gameCount - 1
     }
-    updateSelectedEmulator()
+    updateSelectedGame()
 }
 
 let inputUp = () => {
@@ -69,45 +74,61 @@ let inputUp = () => {
         selectionIndex -= columns
     } else {
         const column = selectionIndex % columns
-        const lastRowStart = Math.floor((emulatorCount - 1) / columns) * columns
+        const lastRowStart = Math.floor((gameCount - 1) / columns) * columns
         const target = lastRowStart + column
 
-        selectionIndex = target < emulatorCount ? target : target - columns
+        selectionIndex = target < gameCount ? target : target - columns
     }
-    updateSelectedEmulator()
+    updateSelectedGame()
 }
 
 let inputDown = () => {
     const columns = 5
 
-    if (selectionIndex + columns < emulatorCount) {
+    if (selectionIndex + columns < gameCount) {
         selectionIndex += columns
     } else {
         const column = selectionIndex % columns
         selectionIndex = column
     }
 
-    updateSelectedEmulator()
+    updateSelectedGame()
 }
 
-fetch('/emulator-list')
+fetch('/game-list')
 .then(res => res.json())
-.then(emulatorList => {
-    console.log(emulatorList)
-    emulatorList.forEach(emulator => {
-        $('#emulator-list').append(`
-            <div class="emulator" emulatorTitle="${emulator.type}">
-                <img class="emulator-icon" src="/images/consoles/${emulator.type}.png" onerror="this.src='/images/box-art/default.png'">
+.then(gameList => {
+    console.log(gameList)
+    gameList.forEach(game => {
+        $('#game-list').append(`
+            <div class="game" gameTitle="${game}">
+                <img class="box-art" src="/images/box-art/xbox/${game}.avif" onerror="this.src='/images/box-art/xbox/default.png'">
             </div>
         `)
     })
-    emulatorCount = $('.emulator').length
+    gameCount = $('.game').length
 
-    $('#emulator-list').append(`
+    $('#game-list').append(`
         <div style=" position:relative; float:left; padding:5%;"></div>
     `)
 
-    updateSelectedEmulator()
+    updateSelectedGame()
+})
+
+$('#game-list').on('click', '.game', function () {
+
+    const selectedGame = $(this).attr('gameTitle')
+
+    console.log(selectedGame)
+
+    fetch('/launch-game', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain'
+        },
+        body: selectedGame
+    })
+    .catch(err => console.error(err))
 })
 
 socket.on('controller-data', (data) => {
@@ -128,14 +149,14 @@ socket.on('controller-data', (data) => {
             inputDown()
             break;
         case 'a':
-            launchEmulator()
+            launchGame()
             break;
         case 'connected':
-            $('#controller-icon-image').attr('src', './images/icons/controller-connected.svg')
+            $('#controller-icon-image').attr('src', '../images/icons/controller-connected.svg')
             $('#controller-icon').attr('style', 'opacity: 1.0;')
             break;
         case 'disconnected':
-            $('#controller-icon-image').attr('src', './images/icons/controller.svg')
+            $('#controller-icon-image').attr('src', '../images/icons/controller.svg')
             $('#controller-icon').attr('style', 'opacity: 0.2;')
             break;
         case 'cursor-toggle':
@@ -162,11 +183,12 @@ $(document).ready(()=>{
             inputDown()
         }
         if(event.key == 'Enter'){
-            launchEmulator()
+            launchGame()
         }
         if(event.key == ' '){
             toggleCursor()
         }
-        $('#emulator-title').text($($('.emulator')[selectionIndex]).attr('emulatorTitle'))
+        $('#game-title').text($($('.game')[selectionIndex]).attr('gameTitle'))
+
     })
 })
