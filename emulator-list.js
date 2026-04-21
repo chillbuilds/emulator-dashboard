@@ -4,18 +4,22 @@ export function fetchEmulatorList(){
         {
             type: 'xbox',
             emulator: 'xemu.AppImage',
+            launchScript: '/home/will/software/games/emulators/xemu/xemu_launch.sh',
             location: '/home/will/software/games/emulators/xemu/',
             gameDir: '/home/will/software/games/emulators/xemu/games/',
             boxArtDir: '/home/will/software/games/emulators/xemu/box-art/',
-            icon: '/home/will/software/games/emulators/xemu/icon.png'
+            icon: '/home/will/software/games/emulators/xemu/icon.png',
+            romFileType: '.xiso.iso'
         },
         {
             type: 'n64',
             emulator: 'gopher64',
+            launchScript: '/home/will/software/games/emulators/gopher64/gopher64_launch.sh',
             location: '/home/will/software/games/emulators/gopher64/',
             gameDir: '/home/will/software/games/emulators/gopher64/games/',
             boxArtDir: '/home/will/software/games/emulators/gopher64/box-art/',
-            icon: '/home/will/software/games/emulators/gopher64/icon.png'
+            icon: '/home/will/software/games/emulators/gopher64/icon.png',
+            romFileType: '.v64'
         },
 
     ]

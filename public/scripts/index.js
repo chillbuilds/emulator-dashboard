@@ -4,7 +4,7 @@ let emulatorCount;
 let cursorVisible = false
 document.documentElement.style.cursor = 'none'
 
-const socket = io()
+// const socket = io()
 
 // if(localStorage.getItem('selectionIndex')){
 //     selectionIndex = localStorage.getItem('selectionIndex')
@@ -41,7 +41,7 @@ let launchEmulator = () => {
 
     console.log(selectedEmulator)
 
-    window.location.href = `/html/${selectedEmulator}.html`
+    window.location.href = `/${selectedEmulator}`
 }
 
 let inputRight = () => {
@@ -110,41 +110,41 @@ fetch('/emulator-list')
     updateSelectedEmulator()
 })
 
-socket.on('controller-data', (data) => {
+// socket.on('controller-data', (data) => {
 
-    console.log('input received:', data)
+//     console.log('input received:', data)
 
-    switch(data) {
-        case 'right':
-            inputRight()
-            break;
-        case 'left':
-            inputLeft()
-            break;
-        case 'up':
-            inputUp()
-            break;
-        case 'down':
-            inputDown()
-            break;
-        case 'a':
-            launchEmulator()
-            break;
-        case 'connected':
-            $('#controller-icon-image').attr('src', './images/icons/controller-connected.svg')
-            $('#controller-icon').attr('style', 'opacity: 1.0;')
-            break;
-        case 'disconnected':
-            $('#controller-icon-image').attr('src', './images/icons/controller.svg')
-            $('#controller-icon').attr('style', 'opacity: 0.2;')
-            break;
-        case 'cursor-toggle':
-            toggleCursor()
-            break;
-        default:
-            break;
-    }
-})
+//     switch(data) {
+//         case 'right':
+//             inputRight()
+//             break;
+//         case 'left':
+//             inputLeft()
+//             break;
+//         case 'up':
+//             inputUp()
+//             break;
+//         case 'down':
+//             inputDown()
+//             break;
+//         case 'a':
+//             launchEmulator()
+//             break;
+//         case 'connected':
+//             $('#controller-icon-image').attr('src', './images/icons/controller-connected.svg')
+//             $('#controller-icon').attr('style', 'opacity: 1.0;')
+//             break;
+//         case 'disconnected':
+//             $('#controller-icon-image').attr('src', './images/icons/controller.svg')
+//             $('#controller-icon').attr('style', 'opacity: 0.2;')
+//             break;
+//         case 'cursor-toggle':
+//             toggleCursor()
+//             break;
+//         default:
+//             break;
+//     }
+// })
 
 $(document).ready(()=>{
     $(document).keypress(function (event) {

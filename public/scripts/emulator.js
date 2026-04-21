@@ -4,7 +4,13 @@ let gameCount;
 let cursorVisible = false
 document.documentElement.style.cursor = 'none'
 
-const socket = io()
+let selectedConsole = ''
+
+selectedConsole = window.location.pathname.split('/').join('')
+
+console.log(selectedConsole)
+
+// const socket = io()
 
 if(localStorage.getItem('selectionIndex')){
     selectionIndex = localStorage.getItem('selectionIndex')
@@ -95,14 +101,14 @@ let inputDown = () => {
     updateSelectedGame()
 }
 
-fetch('/game-list')
+fetch(`/game-list?console=${selectedConsole}`)
 .then(res => res.json())
 .then(gameList => {
     console.log(gameList)
     gameList.forEach(game => {
         $('#game-list').append(`
             <div class="game" gameTitle="${game}">
-                <img class="box-art" src="/images/box-art/xbox/${game}.avif" onerror="this.src='/images/box-art/xbox/default.png'">
+                <img class="box-art" src="/images/box-art/${selectedConsole}/${game}.png" onerror="this.src='/images/box-art/${selectedConsole}/default.png'">
             </div>
         `)
     })
@@ -131,41 +137,41 @@ $('#game-list').on('click', '.game', function () {
     .catch(err => console.error(err))
 })
 
-socket.on('controller-data', (data) => {
+// socket.on('controller-data', (data) => {
 
-    console.log('input received:', data)
+//     console.log('input received:', data)
 
-    switch(data) {
-        case 'right':
-            inputRight()
-            break;
-        case 'left':
-            inputLeft()
-            break;
-        case 'up':
-            inputUp()
-            break;
-        case 'down':
-            inputDown()
-            break;
-        case 'a':
-            launchGame()
-            break;
-        case 'connected':
-            $('#controller-icon-image').attr('src', '../images/icons/controller-connected.svg')
-            $('#controller-icon').attr('style', 'opacity: 1.0;')
-            break;
-        case 'disconnected':
-            $('#controller-icon-image').attr('src', '../images/icons/controller.svg')
-            $('#controller-icon').attr('style', 'opacity: 0.2;')
-            break;
-        case 'cursor-toggle':
-            toggleCursor()
-            break;
-        default:
-            break;
-    }
-})
+//     switch(data) {
+//         case 'right':
+//             inputRight()
+//             break;
+//         case 'left':
+//             inputLeft()
+//             break;
+//         case 'up':
+//             inputUp()
+//             break;
+//         case 'down':
+//             inputDown()
+//             break;
+//         case 'a':
+//             launchGame()
+//             break;
+//         case 'connected':
+//             $('#controller-icon-image').attr('src', '../images/icons/controller-connected.svg')
+//             $('#controller-icon').attr('style', 'opacity: 1.0;')
+//             break;
+//         case 'disconnected':
+//             $('#controller-icon-image').attr('src', '../images/icons/controller.svg')
+//             $('#controller-icon').attr('style', 'opacity: 0.2;')
+//             break;
+//         case 'cursor-toggle':
+//             toggleCursor()
+//             break;
+//         default:
+//             break;
+//     }
+// })
 
 $(document).ready(()=>{
     $(document).keypress(function (event) {

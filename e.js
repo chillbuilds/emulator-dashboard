@@ -44,18 +44,11 @@ app.use(express.text())
 const server = http.createServer(app)
 const io = new Server(server)
 
-const gameDir = '/home/will/software/games/emulators/xemu/games/'
-const boxArtDir = '/home/will/software/games/emulators/xemu/box-art/'
+let selectedConsole;
 
 const gameRunState = {
   gameRunning: false
 }
-
-let gameList = fs.readdirSync(gameDir)
-
-gameList.forEach((game, index) => {
-    gameList[index] = gameList[index].split('.xiso.iso').join('')
-})
 
 let emulatorList = fetchEmulatorList()
 // copy emulator icons to public folder
@@ -65,20 +58,32 @@ emulatorList.forEach(emulator => {
   }catch(error){
     console.log(error)
   }
-
+// copy box art to public folder
   let boxArt = fs.readdirSync(emulator.boxArtDir)
   console.log(boxArt)
   boxArt.forEach(image => {
-    fs.copyFileSync(boxArtDir + image, './public/images/box-art/' + emulator.type + '/' + image)
+    fs.copyFileSync(emulator.boxArtDir + image, './public/images/box-art/' + emulator.type + '/' + image)
+  })
+
+  emulator.gameList = fs.readdirSync(emulator.gameDir)
+
+  emulator.gameList.forEach((game, index) => {
+    emulator.gameList[index] = emulator.gameList[index].split(emulator.romFileType).join('')
   })
 })
 
-gameList.forEach((game, index) => {
-    gameList[index] = gameList[index].split('.xiso.iso').join('')
-})
+console.log(emulatorList)
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'))
+})
+
+app.get('/xbox', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/html/xbox.html'))
+})
+
+app.get('/n64', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/html/n64.html'))
 })
 
 app.get('/emulator-list', (req, res) => {
@@ -95,7 +100,10 @@ app.get('/emulator-list', (req, res) => {
 })
 
 app.get('/game-list', (req, res) => {
-  res.send(JSON.stringify(gameList))
+  selectedConsole = req.query.console
+
+  let emulatorObj = emulatorList.find(s => s.type === selectedConsole)
+  res.send(JSON.stringify(emulatorObj.gameList))
 })
 
 app.post('/launch-game', (req, res) => {
@@ -105,9 +113,13 @@ app.post('/launch-game', (req, res) => {
   gameRunState.gameRunning = true
   const gameSelection = req.body
 
-  let child = spawn('/home/will/software/games/emulators/xemu/xemu_launch.sh', [gameSelection], { stdio: 'inherit' })
+  let child;
+
+  let emulatorObj = emulatorList.find(s => s.type === selectedConsole)
+  child = spawn(emulatorObj.launchScript, [gameSelection], { stdio: 'inherit' })
 
   child.on('error', console.error)
+
 })
 
 server.listen(port, () => {
